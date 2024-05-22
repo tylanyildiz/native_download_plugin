@@ -46,31 +46,35 @@ extension NativeDownloader: URLSessionDownloadDelegate {
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
-            if(filePath?.isEmpty ?? true) { return }
+            guard let filePathURL = filePathURL, !filePathURL.path.isEmpty else { return }
             
-            try FileManager.default.moveItem(at: location, to: filePathURL!)
+            if FileManager.default.fileExists(atPath: filePathURL.path) {
+                try FileManager.default.removeItem(at: filePathURL);
+            }
+            
+            try FileManager.default.moveItem(at: location, to: filePathURL)
             
             if FileManager.default.fileExists(atPath: location.path){
                 print("Old File Removed \(location.path)")
                 try FileManager.default.removeItem(at: location)
             }
             
-            print("FILE SAVED TO \(String(describing: filePathURL!))")
+            print("FILE SAVED TO \(String(describing: filePathURL))")
         } catch let error {
-            print("FILE SAVED ERROR \(error)")
+            print("FILE SAVED ERROR \(error.localizedDescription)")
             onError?(error)
         }
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let error: any Error = error {
-            print("NATIVE DOWNLOAD ERROR: \(error)")
+            print("NATIVE DOWNLOAD ERROR: \(error.localizedDescription)")
             onError?(error)
         }
     }
     
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
-        print("ERROR: \(String(describing: error))")
+        print("ERROR: \(error?.localizedDescription ?? "Error")")
         onError?(error)
     }
     
