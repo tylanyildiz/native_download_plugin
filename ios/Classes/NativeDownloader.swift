@@ -42,16 +42,9 @@ extension NativeDownloader: URLSessionDownloadDelegate {
         do {
             guard let filePathURL = filePathURL, !filePathURL.path.isEmpty else { return }
             
-            var finalURL = filePathURL;
-            var counter = 1
-            while FileManager.default.fileExists(atPath: finalURL.path) {
-                let fileExtension = finalURL.pathExtension
-                let fileNameWithoutExtension = finalURL.deletingPathExtension().lastPathComponent
-                finalURL = filePathURL.deletingLastPathComponent().appendingPathComponent("\(fileNameWithoutExtension)_\(counter)").appendingPathExtension(fileExtension)
-                counter += 1
+            if FileManager.default.fileExists(atPath: location.path) {
+                try FileManager.default.moveItem(at: location, to: filePathURL)
             }
-            
-            try FileManager.default.moveItem(at: location, to: finalURL)
             
             if FileManager.default.fileExists(atPath: location.path){
                 print("Old File Removed \(location.path)")
