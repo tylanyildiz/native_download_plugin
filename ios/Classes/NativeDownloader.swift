@@ -27,7 +27,7 @@ class NativeDownloader: NSObject {
         if FileManager.default.fileExists(atPath: filePath) {
             print("File Already Exist");
             onError("File Already Exist");
-            return;
+            return
         }
         
         self.filePathURL = URL(fileURLWithPath: filePath)
@@ -47,8 +47,14 @@ extension NativeDownloader: URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
             if(filePath?.isEmpty ?? true) { return }
+            
             try FileManager.default.moveItem(at: location, to: filePathURL!)
-            try FileManager.default.removeItem(at: location)
+            
+            if FileManager.default.fileExists(atPath: location.path){
+                print("Old File Removed \(location.path)")
+                try FileManager.default.removeItem(at: location)
+            }
+            
             print("FILE SAVED TO \(String(describing: filePathURL!))")
         } catch let error {
             print("FILE SAVED ERROR \(error)")
