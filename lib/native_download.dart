@@ -11,6 +11,9 @@ const String _downloadMethod = "DOWNLOAD_METHOD";
 /// Download method call
 const String _downloadProcessMethod = "PROCESS_METHOD";
 
+/// Download error method call
+const String _errorDownloadMethod = "ERROR_METHOD";
+
 final class NativeDownloader implements INativeDownloader {
   /// Native Channel
   final MethodChannel _channel;
@@ -26,7 +29,12 @@ final class NativeDownloader implements INativeDownloader {
   }) : _channel = const MethodChannel(_nativeChannel);
 
   @override
-  Future<File?> download(String urlPath, String filePath, {void Function(int count, int total)? process}) async {
+  Future<File?> download(
+    String urlPath,
+    String filePath, {
+    void Function(int count, int total)? onProcess,
+    void Function(dynamic error)? onError,
+  }) async {
     String? downloadPath;
     if (baseUrl?.isNotEmpty ?? false) downloadPath = "$baseUrl/$urlPath";
     downloadPath ??= urlPath;
@@ -35,8 +43,13 @@ final class NativeDownloader implements INativeDownloader {
       if (call.method == _downloadProcessMethod) {
         Map? output = call.arguments;
         if (output != null) {
-          process?.call(output['total']!, output['count']!);
+          onProcess?.call(output['total']!, output['count']!);
         }
+      }
+
+      if (call.method == _errorDownloadMethod) {
+        final error = call.arguments;
+        onError?.call(error);
       }
     });
 

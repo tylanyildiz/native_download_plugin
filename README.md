@@ -2,14 +2,17 @@
 
 ```dart
 final NativeDownloader nativeDownloader = NativeDownloader(
-    baseUrl: //
+    baseUrl: // default url
 );
 
 nativeDownloader.download(
-    urlPath,
-    filePath,
-    process: (count, total) {
-        //
+    urlPath, // download url
+    filePath, // file path
+    onProcess: (count, total) {
+        // Process
+    },
+    onError: (error) {
+        // Error
     }
 );
 ```

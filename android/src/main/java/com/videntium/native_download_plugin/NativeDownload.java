@@ -26,6 +26,12 @@ public class NativeDownload {
     }
 
     public void download() {
+        if(new File(filePath).exists()) {
+            Log.w("Warning","File Already Exists");
+            iDownload.onError("File Already Exists");
+            return;
+        }
+
         long startTime = System.currentTimeMillis();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> {
@@ -42,7 +48,7 @@ public class NativeDownload {
 
                while ((count = inputStream.read(bytes)) != -1){
                    total += count;
-                   iDownload.process(total, contentLength);
+                   iDownload.onProcess(total, contentLength);
                    fileOutputStream.write(bytes, 0, count);
                }
                long endTime = System.currentTimeMillis();
@@ -53,6 +59,7 @@ public class NativeDownload {
            } catch (Exception exception){
                String exceptionMessage = Objects.requireNonNull(exception.getMessage());
                Log.e("Exception", exceptionMessage);
+               iDownload.onError(exception);
            } finally {
                executorService.shutdown();
                Log.i("Download","Downlaod Done: " + urlPath);

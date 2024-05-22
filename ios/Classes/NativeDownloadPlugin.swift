@@ -25,15 +25,20 @@ public class NativeDownloadPlugin: NSObject, FlutterPlugin {
               result(["error": "Invalid arguments"])
               return
         }
-        self.nativeDonwnloader.download(urlPath: urlPath, filePath: filePath) { count, total in 
-        let output = ["count": count, "total": total]
-         DispatchQueue.main.async {
-            self.nativeChannel.invokeMethod("PROCESS_METHOD", arguments: output)
+        
+        self.nativeDonwnloader.download(urlPath: urlPath, filePath: filePath) { count, total in
+            let output = ["count": count, "total": total]
+             DispatchQueue.main.async {
+                self.nativeChannel.invokeMethod("PROCESS_METHOD", arguments: output)
+            }
+            if(count == total) {
+              result(output)
+            }
+        } onError: { error in
+            DispatchQueue.main.async {
+                self.nativeChannel.invokeMethod("ERROR_METHOD", arguments: ["error": error])
+           }
         }
-        if(count == total) {
-          result(output)
-        }
-      }
       break;
     default:
       result(FlutterMethodNotImplemented)

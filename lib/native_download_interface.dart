@@ -6,6 +6,7 @@ abstract interface class INativeDownloader {
   Future<File?> download(
     String urlPath,
     String filePath, {
-    void Function(int count, int total)? process,
+    void Function(int count, int total)? onProcess,
+    void Function(dynamic error)? onError,
   });
 }

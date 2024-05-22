@@ -26,6 +26,7 @@ public class NativeDownloadPlugin implements FlutterPlugin, MethodCallHandler {
   private final String NATIVE_CHANNEL = "NATIVE_DOWNLOAD_CHANNEL";
   private final String DOWNLOAD_METHOD = "DOWNLOAD_METHOD";
   private final String PROCESS_METHOD = "PROCESS_METHOD";
+  private final String ERROR_METHOD = "ERROR_METHOD";
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -42,19 +43,32 @@ public class NativeDownloadPlugin implements FlutterPlugin, MethodCallHandler {
 
         String urlPath = call.argument("url_path");
         String filePath = call.argument("file_path");
-        NativeDownloadInterface iDownload = (count, total) -> {
-          Map<String, Integer> output = new HashMap<String, Integer>();
-          Log.i("Download Process", urlPath + " : Count: " + count + " of Total: " + total);
-          output.put("count", count);
-          output.put("total", total);
-          if(count.equals(total)){
-            result.success(output);
+        NativeDownload nativeDownload = new NativeDownload(urlPath, filePath, new NativeDownloadInterface() {
+          @Override
+          public void onProcess(Integer count, Integer total) {
+            Map<String, Integer> output = new HashMap<String, Integer>();
+            Log.i("Download Process", urlPath + " : Count: " + count + " of Total: " + total);
+            output.put("count", count);
+            output.put("total", total);
+
+            if(count.equals(total)){
+              result.success(output);
+            }
+
+            handler.post(() -> {
+              channel.invokeMethod(PROCESS_METHOD, output);
+            });
           }
-          handler.post(() -> {
-            channel.invokeMethod(PROCESS_METHOD, output);
-          });
-        };
-        NativeDownload nativeDownload = new NativeDownload(urlPath, filePath, iDownload);
+
+          @Override
+          public void onError(Object error) {
+            handler.post(() -> {
+              Map<String, Object> output = new HashMap<String, Object>();
+              output.put("error", error);
+              channel.invokeMethod(ERROR_METHOD, output);
+            });
+          }
+        });
         nativeDownload.download();
         break;
       default:
