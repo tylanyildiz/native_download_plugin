@@ -7,7 +7,7 @@ class NativeDownloader: NSObject {
     private var downloadTask: URLSessionDownloadTask!
     private var backgroundSession: URLSession!
     private var onProcess: ((Int64, Int64) -> Void)?
-    private var onError: ((Any) -> Void)?
+    private var onError: ((Any?) -> Void)?
     private var filePathURL: URL?
     private var filePath: String?
 
@@ -46,6 +46,7 @@ extension NativeDownloader: URLSessionDownloadDelegate {
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
+            if(filePath?.isEmpty ?? true) { return }
             try FileManager.default.moveItem(at: location, to: filePathURL!)
             print("FILE SAVED TO \(String(describing: filePathURL!))")
         } catch let error {
