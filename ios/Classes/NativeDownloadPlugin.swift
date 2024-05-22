@@ -3,9 +3,11 @@ import UIKit
 
 public class NativeDownloadPlugin: NSObject, FlutterPlugin {
   private let nativeChannel: FlutterMethodChannel;
+    private let nativeDonwnloader: NativeDownloader;
     
     init(nativeChannel: FlutterMethodChannel) {
         self.nativeChannel = nativeChannel
+        self.nativeDonwnloader = NativeDownloader();
     }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -23,14 +25,11 @@ public class NativeDownloadPlugin: NSObject, FlutterPlugin {
               result(["error": "Invalid arguments"])
               return
         }
-      let nativeDonwnloader = NativeDownloader()
-      nativeDonwnloader.download(urlPath: urlPath, filePath: filePath) { count, total in 
+        self.nativeDonwnloader.download(urlPath: urlPath, filePath: filePath) { count, total in 
         let output = ["count": count, "total": total]
-        /* 
          DispatchQueue.main.async {
             self.nativeChannel.invokeMethod("PROCESS_METHOD", arguments: output)
         }
-         */
         if(count == total) {
           result(output)
         }

@@ -7,6 +7,7 @@ class NativeDownloader: NSObject {
     private var backgroundSession: URLSession!
     private var process: ((Int64, Int64) -> Void)?
     private var filePathURL: URL?
+    private var filePath: String?
 
     override init(){
         super.init()
@@ -18,6 +19,7 @@ class NativeDownloader: NSObject {
     
     func download(urlPath: String, filePath: String, process: @escaping (Int64, Int64) -> Void){
         self.process = process
+        self.filePath = filePath;
         self.filePathURL = URL(fileURLWithPath: filePath)
         guard let url: URL = URL(string: urlPath) else {
             print("Invalid URL Address")
@@ -33,10 +35,15 @@ extension NativeDownloader: URLSessionDownloadDelegate {
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
+            let exist = FileManager.default.fileExists(atPath: filePath!)
+            if(exist) {
+                try FileManager.default.removeItem(atPath: filePath!);
+            }
+            
             try FileManager.default.moveItem(at: location, to: filePathURL!)
             print("FILE SAVED TO \(String(describing: filePathURL!))")
-        } catch {
-            print("FILE SAVED ERROR")
+        } catch let error {
+            print("FILE SAVED ERROR \(error)")
         }
     }
 
