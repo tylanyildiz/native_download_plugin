@@ -26,9 +26,11 @@ public class NativeDownloadPlugin: NSObject, FlutterPlugin {
       let nativeDonwnloader = NativeDownloader()
       nativeDonwnloader.download(urlPath: urlPath, filePath: filePath) { count, total in 
         let output = ["count": count, "total": total]
-        DispatchQueue.main.async {
+        /* 
+         DispatchQueue.main.async {
             self.nativeChannel.invokeMethod("PROCESS_METHOD", arguments: output)
         }
+         */
         if(count == total) {
           result(output)
         }
