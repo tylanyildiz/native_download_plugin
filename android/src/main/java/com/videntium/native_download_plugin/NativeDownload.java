@@ -15,23 +15,47 @@ import java.util.concurrent.Executors;
 
 
 public class NativeDownload {
-    private final RNativeDownload rNativeDownload;
+    private final String urlPath;
+    private final String filePath;
+    private final NativeDownloadInterface iDownload;
 
     NativeDownload(String urlPath, String filePath, NativeDownloadInterface iDownload){
-        rNativeDownload = new RNativeDownload(urlPath, filePath, iDownload);
+        this.urlPath = urlPath;
+        this.filePath = filePath;
+        this.iDownload = iDownload;
     }
 
     public void download() {
+        long startTime = System.currentTimeMillis();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> {
            try{
-               rNativeDownload.run();
+               URL url = URI.create(urlPath).toURL();
+               URLConnection urlConnection = url.openConnection();
+
+               InputStream inputStream = url.openStream();
+               FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+
+               byte[] bytes = new byte[1024];
+               int count = 0, total = 0;
+               int contentLength = urlConnection.getContentLength();
+
+               while ((count = inputStream.read(bytes)) != -1){
+                   total += count;
+                   iDownload.process(total, contentLength);
+                   fileOutputStream.write(bytes, 0, count);
+               }
+               long endTime = System.currentTimeMillis();
+               long duration = endTime - startTime;
+               fileOutputStream.close();
+               inputStream.close();
+               Log.i("Download Time", "Download Completed in " + duration + " ms");
            } catch (Exception exception){
                String exceptionMessage = Objects.requireNonNull(exception.getMessage());
                Log.e("Exception", exceptionMessage);
            } finally {
                executorService.shutdown();
-               Log.i("Download","Downlaod Done: " + rNativeDownload.urlPath);
+               Log.i("Download","Downlaod Done: " + urlPath);
            }
         });
     }
@@ -43,50 +67,5 @@ public class NativeDownload {
         return rootFile.getAbsolutePath() + "/Android/data/" + packageName + "/files/" + path;
     }
 
-}
-
-
-class RNativeDownload implements  Runnable{
-
-    final String urlPath;
-    final String filePath;
-    final NativeDownloadInterface iDownload;
-
-    RNativeDownload(String urlPath, String filePath, NativeDownloadInterface iDownload){
-        this.urlPath = urlPath;
-        this.filePath = filePath;
-        this.iDownload = iDownload;
-    }
-
-    @Override
-    public void run() {
-        downloadStreamFile();
-    }
-
-
-    void downloadStreamFile(){
-        try {
-            URL url = URI.create(urlPath).toURL();
-            URLConnection urlConnection = url.openConnection();
-
-            InputStream inputStream = url.openStream();
-            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-
-            byte[] bytes = new byte[1024];
-            int count = 0, total = 0;
-            int contentLength = urlConnection.getContentLength();
-
-            while ((count = inputStream.read(bytes)) != -1){
-                total += count;
-                iDownload.process(total, contentLength);
-                fileOutputStream.write(bytes, 0, count);
-            }
-
-            fileOutputStream.close();
-            inputStream.close();
-        } catch (Exception exception) {
-            Log.e("Exception", String.valueOf(exception.getMessage()));
-        }
-    }
 }
 
