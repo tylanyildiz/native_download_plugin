@@ -1,7 +1,7 @@
 name: native_download_plugin
 description: Flutter Native Download Plugin Project
 homepage: https://github.com/tylanyildiz/native_download_plugin
-version: 0.1.4
+version: 0.1.5
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
