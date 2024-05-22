@@ -42,6 +42,10 @@ extension NativeDownloader: URLSessionDownloadDelegate {
         do {
             guard let filePathURL = filePathURL, !filePathURL.path.isEmpty else { return }
             
+            if FileManager.default.fileExists(atPath: filePath!) {
+                try FileManager.default.removeItem(at: filePathURL)
+            }
+            
             if FileManager.default.fileExists(atPath: location.path) {
                 try FileManager.default.moveItem(at: location, to: filePathURL)
             }
