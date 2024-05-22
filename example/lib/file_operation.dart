@@ -23,7 +23,9 @@ abstract final class FileOperation {
   static Future<String> createSubDirectory(String path) async {
     try {
       final newDirectory = await fileDirectory(path);
-      if (!await newDirectory.exists()) await newDirectory.create();
+      if (!await newDirectory.exists()) {
+        await newDirectory.create();
+      }
       return newDirectory.path;
     } catch (e) {
       throw Exception(e);

@@ -2,7 +2,7 @@ PODS:
   - Flutter (1.0.0)
   - integration_test (0.0.1):
     - Flutter
-  - native_download_plugin (0.0.1):
+  - native_download_plugin (0.0.5):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -27,7 +27,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: ce0a3ffa1de96d1a89ca0ac26fca7ea18a749ef4
-  native_download_plugin: 2c78297f6b1d16212a86661516157206b78c8aff
+  native_download_plugin: 464c3996c88b22b7db5f2c18ed273c94c5120dfe
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
