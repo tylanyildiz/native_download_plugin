@@ -24,12 +24,6 @@ class NativeDownloader: NSObject {
         self.onProcess = onProcess
         self.filePath = filePath;
         
-        if FileManager.default.fileExists(atPath: filePath) {
-            print("File Already Exist");
-            onError("File Already Exist");
-            return
-        }
-        
         self.filePathURL = URL(fileURLWithPath: filePath)
         guard let url: URL = URL(string: urlPath) else {
             print("Invalid URL Address")

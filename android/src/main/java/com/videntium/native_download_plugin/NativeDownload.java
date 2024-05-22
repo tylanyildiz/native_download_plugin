@@ -26,11 +26,6 @@ public class NativeDownload {
     }
 
     public void download() {
-        if(new File(filePath).exists()) {
-            Log.w("Warning","File Already Exists");
-            iDownload.onError("File Already Exists");
-            return;
-        }
 
         long startTime = System.currentTimeMillis();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
