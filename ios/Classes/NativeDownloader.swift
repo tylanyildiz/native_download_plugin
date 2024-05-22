@@ -42,6 +42,12 @@ extension NativeDownloader: URLSessionDownloadDelegate {
         do {
             guard let filePathURL = filePathURL, !filePathURL.path.isEmpty else { return }
             
+            let destinationDirectory = filePathURL.deletingLastPathComponent().path
+            if !FileManager.default.fileExists(atPath: destinationDirectory){
+                try FileManager.default.createDirectory(atPath: destinationDirectory, withIntermediateDirectories: true, attributes: nil)
+                print("Destination Directory: \(destinationDirectory) Created")
+            }
+            
             if FileManager.default.fileExists(atPath: filePath!) {
                 try FileManager.default.removeItem(at: filePathURL)
             }
@@ -50,10 +56,7 @@ extension NativeDownloader: URLSessionDownloadDelegate {
                 try FileManager.default.moveItem(at: location, to: filePathURL)
             }
             
-            let destinationDirectory = filePathURL.deletingLastPathComponent().path
-            if !FileManager.default.fileExists(atPath: destinationDirectory){
-                try FileManager.default.createDirectory(atPath: destinationDirectory, withIntermediateDirectories: true, attributes: nil)
-            }
+
             
             if FileManager.default.fileExists(atPath: location.path){
                 print("Old File Removed \(location.path)")
