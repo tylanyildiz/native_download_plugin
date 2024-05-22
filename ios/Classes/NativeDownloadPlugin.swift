@@ -2,16 +2,13 @@ import Flutter
 import UIKit
 
 public class NativeDownloadPlugin: NSObject, FlutterPlugin {
-
-
-  let nativeChannel: FlutterMethodChannel;
+  private let nativeChannel: FlutterMethodChannel;
     
     init(nativeChannel: FlutterMethodChannel) {
         self.nativeChannel = nativeChannel
     }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-      
     let channel = FlutterMethodChannel(name: "NATIVE_DOWNLOAD_CHANNEL", binaryMessenger: registrar.messenger())
     let instance = NativeDownloadPlugin(nativeChannel: channel)
     registrar.addMethodCallDelegate(instance, channel: channel)
@@ -28,8 +25,10 @@ public class NativeDownloadPlugin: NSObject, FlutterPlugin {
         }
       let nativeDonwnloader = NativeDownloader()
       nativeDonwnloader.download(urlPath: urlPath, filePath: filePath) { count, total in 
-        let output = ["count": count, total: total]
-        self.nativeChannel.invokeMethod("PROCESS_METHOD", arguments: output)
+        let output = ["count": count, "total": total]
+        DispatchQueue.main.async {
+            self.nativeChannel.invokeMethod("PROCESS_METHOD", arguments: output)
+        }
         if(count == total) {
           result(output)
         }
