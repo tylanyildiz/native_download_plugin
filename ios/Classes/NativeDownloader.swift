@@ -48,6 +48,7 @@ extension NativeDownloader: URLSessionDownloadDelegate {
         do {
             if(filePath?.isEmpty ?? true) { return }
             try FileManager.default.moveItem(at: location, to: filePathURL!)
+            try FileManager.default.removeItem(at: location)
             print("FILE SAVED TO \(String(describing: filePathURL!))")
         } catch let error {
             print("FILE SAVED ERROR \(error)")

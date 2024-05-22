@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'native_download_plugin'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = 'Flutter Native Download Plugin Project'
   s.description      = <<-DESC
 Download File by Native
