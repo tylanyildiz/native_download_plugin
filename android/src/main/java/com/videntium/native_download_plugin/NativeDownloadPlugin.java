@@ -6,9 +6,7 @@ import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Handler;
+import android.os.Handler;
 
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -40,13 +38,13 @@ public class NativeDownloadPlugin implements FlutterPlugin, MethodCallHandler {
     String method = call.method;
     switch (method){
       case DOWNLOAD_METHOD:
-        android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
+        Handler handler = new Handler(Looper.getMainLooper());
 
         String urlPath = call.argument("url_path");
         String filePath = call.argument("file_path");
         NativeDownloadInterface iDownload = (count, total) -> {
           Map<String, Integer> output = new HashMap<String, Integer>();
-          Log.i("Download Process", "Count: " + count + "of Total: " + total);
+          Log.i("Download Process", urlPath + " : Count: " + count + " of Total: " + total);
           output.put("count", count);
           output.put("total", total);
           if(count.equals(total)){

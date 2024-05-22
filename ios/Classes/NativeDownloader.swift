@@ -23,7 +23,7 @@ class NativeDownloader: NSObject {
             print("Invalid URL Address")
             return
         }
-        print("URL PATH \(urlPath) || FILE PATH: \(filePath)")
+        print("URL PATH \(urlPath)\nFILE PATH: \(filePath)")
         self.downloadTask = self.backgroundSession.downloadTask(with: url)
         self.downloadTask.resume()
     }

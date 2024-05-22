@@ -12,7 +12,6 @@ import java.net.URLConnection;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 
 public class NativeDownload {
@@ -32,6 +31,7 @@ public class NativeDownload {
                Log.e("Exception", exceptionMessage);
            } finally {
                executorService.shutdown();
+               Log.i("Download","Downlaod Done: " + rNativeDownload.urlPath);
            }
         });
     }
@@ -80,7 +80,6 @@ class RNativeDownload implements  Runnable{
                 total += count;
                 iDownload.process(total, contentLength);
                 fileOutputStream.write(bytes, 0, count);
-                Thread.sleep(50);
             }
 
             fileOutputStream.close();
