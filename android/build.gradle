@@ -1,5 +1,5 @@
 group = "com.videntium.native_download_plugin"
-version = "4.0"
+version = "5.0"
 
 buildscript {
     repositories {
